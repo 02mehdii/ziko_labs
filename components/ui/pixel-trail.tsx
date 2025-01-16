@@ -1,6 +1,10 @@
 "use client"
 
 import React, { useCallback, useMemo, useRef } from "react"
+
+interface PixelElement extends HTMLDivElement {
+  __animatePixel: () => void
+}
 import { motion, useAnimationControls } from "framer-motion"
 import { v4 as uuidv4 } from "uuid"
 
@@ -36,9 +40,9 @@ const PixelTrail: React.FC<PixelTrailProps> = ({
 
       const pixelElement = document.getElementById(
         `${trailId.current}-pixel-${x}-${y}`
-      )
+      ) as PixelElement | null
       if (pixelElement) {
-        const animatePixel = (pixelElement as any).__animatePixel
+        const animatePixel = pixelElement.__animatePixel
         if (animatePixel) animatePixel()
       }
     },
@@ -102,9 +106,9 @@ const PixelDot: React.FC<PixelDotProps> = React.memo(
 
     // Attach the animatePixel function to the DOM element
     const ref = useCallback(
-      (node: HTMLDivElement | null) => {
+      (node: PixelElement | null) => {
         if (node) {
-          ;(node as any).__animatePixel = animatePixel
+          node.__animatePixel = animatePixel
         }
       },
       [animatePixel]

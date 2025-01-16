@@ -5,6 +5,11 @@ import { useEffect, useState } from "react"
 // Define the possible screen sizes as a const array for better type inference
 const SCREEN_SIZES = ["xs", "sm", "md", "lg", "xl", "2xl"] as const
 
+// Utility function to validate screen sizes
+export function isValidScreenSize(size: string): size is ScreenSize {
+  return SCREEN_SIZES.includes(size as ScreenSize)
+}
+
 // Create a union type from the array
 export type ScreenSize = (typeof SCREEN_SIZES)[number]
 

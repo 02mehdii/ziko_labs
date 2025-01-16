@@ -96,7 +96,7 @@ export const WavyBackground = ({
     }
   };
 
-  let animationId: number;
+  const animationId = useRef<number | null>(null);
   const render = () => {
     const ctx = ctxRef.current;
     if (!ctx) return;
@@ -105,13 +105,15 @@ export const WavyBackground = ({
     ctx.globalAlpha = waveOpacity || 0.5;
     ctx.fillRect(0, 0, w, h);
     drawWave(5);
-    animationId = requestAnimationFrame(render);
+    animationId.current = requestAnimationFrame(render);
   };
 
   useEffect(() => {
     init();
     return () => {
-      cancelAnimationFrame(animationId);
+      if (animationId.current !== null) {
+        cancelAnimationFrame(animationId.current);
+      }
     };
   }, []);
 

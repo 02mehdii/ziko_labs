@@ -15,7 +15,7 @@ export function SuccessDialog({
         <DialogHeader>
           <DialogTitle className="text-white">Thanks for submitting!</DialogTitle>
         </DialogHeader>
-        <p className="text-white">Look out for a message soon.</p>
+        <p className="text-white">Send us a message @Ziko_Labs to expedite queue</p>
       </DialogContent>
     </Dialog>
   )
