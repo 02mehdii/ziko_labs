@@ -1,8 +1,7 @@
-import { useScreenSize } from "@/components/hooks/use-screen-size-simple"
 import { PixelTrail } from "@/components/ui/pixel-trail"
 
 const PixelTrailDemo: React.FC = () => {
-  const screenSize = useScreenSize()
+  const width = typeof window !== 'undefined' ? window.innerWidth : 0
 
   return (
     <div className="relative w-full h-full min-h-[500px] bg-[#dcddd7] text-black flex flex-col font-calendas">
