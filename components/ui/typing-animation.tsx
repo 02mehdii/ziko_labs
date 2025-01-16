@@ -1,36 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface TypingAnimationProps {
   text: string;
-  duration?: number;
+  speed?: number; // characters per second
   className?: string;
 }
 
 export function TypingAnimation({
   text,
-  duration = 200,
+  speed = 10, // default to 10 characters per second
   className,
 }: TypingAnimationProps) {
   const [displayedText, setDisplayedText] = useState<string>("");
-  const [i, setI] = useState<number>(0);
+  const animationRef = useRef<number>();
 
   useEffect(() => {
-    const typingEffect = setInterval(() => {
-      if (i < text.length) {
-        setDisplayedText(text.substring(0, i + 1));
-        setI(i + 1);
-      } else {
-        clearInterval(typingEffect);
+    let currentIndex = 0;
+    
+    let lastTime = 0;
+    const delay = 1000 / speed; // milliseconds per character
+    
+    const animate = (timestamp: number) => {
+      if (!lastTime) lastTime = timestamp;
+      
+      if (timestamp - lastTime >= delay && currentIndex < text.length) {
+        setDisplayedText(prev => prev + text[currentIndex]);
+        currentIndex++;
+        lastTime = timestamp;
       }
-    }, duration);
-
-    return () => {
-      clearInterval(typingEffect);
+      
+      if (currentIndex < text.length) {
+        animationRef.current = requestAnimationFrame(animate);
+      }
     };
-  }, [duration, i, text]);
+
+    animationRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [text]);
+
+  useEffect(() => {
+    setDisplayedText("");
+  }, [text]);
 
   return (
     <h1

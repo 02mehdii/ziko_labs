@@ -26,8 +26,22 @@ export async function POST(req: Request) {
     })
 
     if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(`API request failed with status ${response.status}: ${errorData.message || 'Unknown error'}`)
+      const errorText = await response.text()
+      let errorMessage = `API request failed with status ${response.status}`
+      
+      try {
+        const errorData = JSON.parse(errorText)
+        errorMessage += `: ${errorData.message || errorData.error?.message || 'Unknown error'}`
+        
+        // Handle specific Deepseek API error codes
+        if (errorData.error?.code === 'invalid_api_key') {
+          errorMessage = 'Invalid API key. Please check your DEEPSEEK_API_KEY in .env.local'
+        }
+      } catch {
+        errorMessage += `: ${errorText}`
+      }
+      
+      throw new Error(errorMessage)
     }
 
     const stream = new ReadableStream({
